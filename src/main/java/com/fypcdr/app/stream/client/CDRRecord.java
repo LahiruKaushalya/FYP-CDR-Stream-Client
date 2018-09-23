@@ -1,17 +1,39 @@
 package com.fypcdr.app.stream.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  * @author Lahiru Kaushalya
  */
-public abstract class CDRRecord {
+public class CDRRecord {
     
+    @JsonProperty("called_num")
     private final String called_num;
+    
+    @JsonProperty("called_tower")
     private final String called_tower;
+    
+    @JsonProperty("recipient_num")
     private final String recipient_num;
+    
+    @JsonProperty("recipient_tower")
     private final String recipient_tower;
+    
+    @JsonProperty("datetime")
     private final String datetime;
+    
+    @JsonProperty("duration")
     private final String duration;
+    
+    public CDRRecord(){
+        this.datetime = "";
+        this.duration = "";
+        this.called_num = "";
+        this.called_tower = "";
+        this.recipient_num = "";
+        this.recipient_tower = "";
+    }
     
     public CDRRecord(
             String called_num,
@@ -20,8 +42,7 @@ public abstract class CDRRecord {
             String recipient_tower,
             String datetime,
             String duration
-    ){
-        
+    ){ 
         this.datetime = datetime;
         this.duration = duration;
         this.called_num = called_num;
@@ -52,54 +73,6 @@ public abstract class CDRRecord {
 
     public String getRecipient_tower() {
         return recipient_tower;
-    }
-    
-    public static class CDRTemplate1 extends CDRRecord{
-        
-        private final String special_attribute1;
-
-        public CDRTemplate1(
-                String called_num,
-                String called_tower,
-                String recipient_num,
-                String recipient_tower,
-                String datetime,
-                String duration,
-                String special_attribute1
-        ){
-            super(called_num, called_tower, recipient_num, recipient_tower, datetime, duration);
-            
-            this.special_attribute1 = special_attribute1;
-        }
-        
-        public String getSpecial_attribute1() {
-            return special_attribute1;
-        }
-    
-    }
-    
-    public static class CDRTemplate2 extends CDRRecord{
-        
-        private final String special_attribute1;
-
-        public CDRTemplate2(
-                String called_num,
-                String called_tower,
-                String recipient_num,
-                String recipient_tower,
-                String datetime,
-                String duration,
-                String special_attribute1
-        ){
-            super(called_num, called_tower, recipient_num, recipient_tower, datetime, duration);
-            
-            this.special_attribute1 = special_attribute1;
-        }
-        
-        public String getSpecial_attribute1() {
-            return special_attribute1;
-        }
-    
     }
     
 }
