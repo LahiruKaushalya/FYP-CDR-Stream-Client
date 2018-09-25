@@ -17,4 +17,8 @@ public interface Settings {
     
     //request timeout 60s
     final long timeout = 60000;
+    
+    //JSON object separator
+    final String jsonSeparator = "/";
+    
 }

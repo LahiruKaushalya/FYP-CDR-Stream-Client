@@ -6,13 +6,13 @@ package com.fypcdr.app.stream.client;
  */
 public class Client {
 
-    public static void main(String[] args){
-       
+    public static void main(String[] args) {
+
         int noOfRecords = Integer.parseInt(args[0]);
-        
+
         StreamHandler streamHandler = new StreamHandler();
-        
-        streamHandler.requestCDRRecords(noOfRecords); 
+
+        streamHandler.requestCDRRecords(noOfRecords);
     }
 
 }

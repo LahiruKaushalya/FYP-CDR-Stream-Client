@@ -7,26 +7,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Lahiru Kaushalya
  */
 public class CDRRecord {
-    
+
     @JsonProperty("called_num")
     private final String called_num;
-    
+
     @JsonProperty("called_tower")
     private final String called_tower;
-    
+
     @JsonProperty("recipient_num")
     private final String recipient_num;
-    
+
     @JsonProperty("recipient_tower")
     private final String recipient_tower;
-    
+
     @JsonProperty("datetime")
     private final String datetime;
-    
+
     @JsonProperty("duration")
     private final String duration;
-    
-    public CDRRecord(){
+
+    public CDRRecord() {
         this.datetime = "";
         this.duration = "";
         this.called_num = "";
@@ -34,7 +34,7 @@ public class CDRRecord {
         this.recipient_num = "";
         this.recipient_tower = "";
     }
-    
+
     public CDRRecord(
             String called_num,
             String called_tower,
@@ -42,7 +42,7 @@ public class CDRRecord {
             String recipient_tower,
             String datetime,
             String duration
-    ){ 
+    ) {
         this.datetime = datetime;
         this.duration = duration;
         this.called_num = called_num;
@@ -50,7 +50,7 @@ public class CDRRecord {
         this.recipient_num = recipient_num;
         this.recipient_tower = recipient_tower;
     }
-    
+
     public String getDatetime() {
         return datetime;
     }
@@ -58,7 +58,7 @@ public class CDRRecord {
     public String getDuration() {
         return duration;
     }
-    
+
     public String getCalled_num() {
         return called_num;
     }
@@ -74,5 +74,5 @@ public class CDRRecord {
     public String getRecipient_tower() {
         return recipient_tower;
     }
-    
+
 }

@@ -25,7 +25,8 @@ public class StreamHandler {
         if (noOfRecords <= defaultChunkSize) {
             ResponseHandler R1 = new ResponseHandler(system, 0, noOfRecords);
             R1.run();
-        } else {
+        } 
+        else {
             int chunkSize = getChunkSize(noOfRecords);
             int start, end, count = 0;
 
@@ -39,7 +40,8 @@ public class StreamHandler {
                     ResponseHandler thread = new ResponseHandler(system, start, end);
                     thread.start();
                     thread.join(TIME_OUT);
-                } catch (InterruptedException ex) {
+                } 
+                catch (InterruptedException ex) {
                     Logger.getLogger(StreamHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -52,12 +54,14 @@ public class StreamHandler {
 
         if (noOfRecords % Settings.chunkSize == 0) {
             curChunkSize = Settings.chunkSize;
-        } else {
+        } 
+        else {
             while (curChunkSize > Settings.chunkSize) {
                 if (curChunkSize % 2 != 0) {
                     curChunkSize += 1;
                     curChunkSize /= 2;
-                } else {
+                } 
+                else {
                     curChunkSize /= 2;
                 }
             }

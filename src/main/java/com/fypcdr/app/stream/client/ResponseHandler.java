@@ -9,36 +9,40 @@ import akka.http.javadsl.model.Uri;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Lahiru Kaushalya
  */
-public class ResponseHandler extends Thread{
-    
+public class ResponseHandler extends Thread {
+
     private final int start;
     private final int end;
     private final long TIME_OUT;
     private final ActorSystem system;
-    
-    public ResponseHandler(ActorSystem system, int start, int end){
+
+    public ResponseHandler(ActorSystem system, int start, int end) {
         this.start = start;
         this.end = end;
         this.TIME_OUT = Settings.timeout; // 60 Seconds
         this.system = system;
     }
-    
+
     @Override
     public void run() {
+
         System.out.println("Requesting CDR records from " + start + " to " + end);
-        
+
         final CompletionStage<HttpResponse> responseFuture
                 = Http.get(system)
                 .singleRequest(HttpRequest.create()
-                .withUri(getUri()));
+                        .withUri(getUri()));
 
         final Materializer materializer = ActorMaterializer.create(system);
-        
+
         try {
             final HttpResponse response = responseFuture.toCompletableFuture().get();
 
@@ -52,19 +56,27 @@ public class ResponseHandler extends Thread{
                         .utf8String()
                         .replace("[", "")
                         .replace("]", "")
-                        .split("/");
-                
+                        .split(Settings.jsonSeparator);
+
                 System.out.println(body.length + " records recieved.");
-                
+
                 DatabaseHandler dbThread = new DatabaseHandler(body, start, end);
                 dbThread.start();
+            } 
+            else {
+                System.out.println("Error while communicating with the server.");
             }
+        } 
+        catch (InterruptedException ex) {
+            Logger.getLogger(ResponseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (ExecutionException ex) {
+            Logger.getLogger(ResponseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        } catch (Exception e) {System.out.println(e);}
-        
     }
-    
-    private Uri getUri(){
+
+    private Uri getUri() {
         Uri uri = Uri.create(
                 "http://"
                 + Settings.ipAddress + ":"
@@ -74,5 +86,5 @@ public class ResponseHandler extends Thread{
         );
         return uri;
     }
-    
+
 }
