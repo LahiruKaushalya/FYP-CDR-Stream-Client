@@ -8,7 +8,6 @@ import akka.http.javadsl.model.ResponseEntity;
 import akka.http.javadsl.model.Uri;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -20,14 +19,12 @@ public class ResponseHandler extends Thread{
     private final int start;
     private final int end;
     private final long TIME_OUT;
-    private final ObjectMapper mapper;
     private final ActorSystem system;
     
     public ResponseHandler(ActorSystem system, int start, int end){
         this.start = start;
         this.end = end;
         this.TIME_OUT = Settings.timeout; // 60 Seconds
-        this.mapper = new ObjectMapper();
         this.system = system;
     }
     
@@ -57,11 +54,10 @@ public class ResponseHandler extends Thread{
                         .replace("]", "")
                         .split("/");
                 
-                for(String item : body){
-                    CDRRecord cdrRecord = mapper.readValue(item, CDRRecord.class);
-                    //Database insertion
-                }
-                System.out.println("Done. " + body.length + "records recieved");
+                System.out.println(body.length + " records recieved.");
+                
+                DatabaseHandler dbThread = new DatabaseHandler(body, start, end);
+                dbThread.start();
             }
 
         } catch (Exception e) {System.out.println(e);}
