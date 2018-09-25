@@ -7,9 +7,12 @@ package com.fypcdr.app.stream.client;
 public class Client {
 
     public static void main(String[] args){
-
+       
+        int noOfRecords = Integer.parseInt(args[0]);
+        
         StreamHandler streamHandler = new StreamHandler();
-        streamHandler.requestCDRRecords(20000000); // Test...
+        
+        streamHandler.requestCDRRecords(noOfRecords); 
     }
 
 }
