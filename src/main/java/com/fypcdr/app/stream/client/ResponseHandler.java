@@ -81,7 +81,7 @@ public class ResponseHandler extends Thread {
         catch (ExecutionException ex) {
             Logger.getLogger(ResponseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
 
     private Uri getUri() {

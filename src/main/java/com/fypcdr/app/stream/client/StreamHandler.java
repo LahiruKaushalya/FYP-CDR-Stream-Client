@@ -28,7 +28,7 @@ public class StreamHandler {
         } 
         else {
             int chunkSize = getChunkSize(noOfRecords);
-            int start, end, count = 0;
+            int start, end;
 
             for (int i = 0; i < noOfRecords; i += chunkSize) {
                 start = i;
@@ -45,6 +45,7 @@ public class StreamHandler {
                     Logger.getLogger(StreamHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            system.terminate();
         }
     }
 
