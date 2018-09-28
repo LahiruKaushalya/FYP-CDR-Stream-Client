@@ -1,13 +1,18 @@
 package com.fypcdr.app.stream.client;
 
 import akka.actor.ActorSystem;
+import static akka.http.javadsl.ConnectHttp.toHost;
 import akka.http.javadsl.Http;
+import akka.http.javadsl.OutgoingConnection;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
 import akka.http.javadsl.model.ResponseEntity;
 import akka.http.javadsl.model.Uri;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
+import akka.stream.javadsl.Flow;
+import akka.stream.javadsl.Sink;
+import akka.stream.javadsl.Source;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -35,13 +40,16 @@ public class ResponseHandler extends Thread {
     public void run() {
 
         System.out.println("Requesting CDR records from " + start + " to " + end);
-
-        final CompletionStage<HttpResponse> responseFuture
-                = Http.get(system)
-                .singleRequest(HttpRequest.create()
-                        .withUri(getUri()));
-
+        
         final Materializer materializer = ActorMaterializer.create(system);
+        
+        final Flow<HttpRequest, HttpResponse, CompletionStage<OutgoingConnection>> connectionFlow =
+            Http.get(system).outgoingConnection(toHost(Settings.ipAddress, Settings.port));
+        
+        final CompletionStage<HttpResponse> responseFuture
+                = Source.single(HttpRequest.create().withUri(getUri()))
+                .via(connectionFlow)
+                .runWith(Sink.<HttpResponse>head(), materializer);
 
         try {
             final HttpResponse response = responseFuture.toCompletableFuture().get();
@@ -78,9 +86,7 @@ public class ResponseHandler extends Thread {
 
     private Uri getUri() {
         Uri uri = Uri.create(
-                "http://"
-                + Settings.ipAddress + ":"
-                + Settings.port + "/cdrRecords?start="
+                "/cdrRecords?start="
                 + start + "&end="
                 + end
         );
