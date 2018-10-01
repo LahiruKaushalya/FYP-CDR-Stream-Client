@@ -2,6 +2,8 @@ package com.fypcdr.app.stream.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,17 +29,31 @@ public class DatabaseHandler extends Thread {
     public void run() {
         
         System.out.println("Starting database insertions. From CDR records " + start + " to " + end);
-        
+
+        String tablename = PostgreConnector.getTableName();
+        String insert = "INSERT INTO "+tablename+" (called_num, called_tower, recipient_num, recipient_tower, datetime, duration) VALUES(?, ?, ?, ?, ?, ?);";
+        PreparedStatement ps = null;
+        CDRRecord cdrRecord;
+        try {
+            ps = PostgreConnector.getConnection().prepareStatement(insert);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         for (String item : jsonArray) {
             try {
-
-                CDRRecord cdrRecord = mapper.readValue(item, CDRRecord.class);
-
-                //System.out.println(cdrRecord.getCalled_num());
-                //Database insertion
-            } 
+                cdrRecord = mapper.readValue(item, CDRRecord.class);
+                ps.setString(1, cdrRecord.getCalled_num());
+                ps.setString(2, cdrRecord.getCalled_tower());
+                ps.setString(3, cdrRecord.getRecipient_num());
+                ps.setString(4, cdrRecord.getRecipient_tower());
+                ps.setString(5, cdrRecord.getDatetime());
+                ps.setString(6, cdrRecord.getDuration());
+                ps.executeUpdate();
+            }
             catch (IOException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         System.out.println("Database insertions finished. From CDR records " + start + " to " + end);
