@@ -23,6 +23,7 @@ public class PostgreConnector{
                 e.printStackTrace();
             }
         }
+        connection.setAutoCommit(true);
         return connection;
     }
 
