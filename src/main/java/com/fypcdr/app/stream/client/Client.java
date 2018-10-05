@@ -12,7 +12,7 @@ public class Client {
     public static void main(String[] args) throws SQLException {
 
         int noOfRecords = Integer.parseInt(args[0]);
-        String tablename = "CDR_test_3";
+        String tablename = "cdrtesttable";
         PostgreConnector.createTable(tablename);
 
         StreamHandler streamHandler = new StreamHandler();
