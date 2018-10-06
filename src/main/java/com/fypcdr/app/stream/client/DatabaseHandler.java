@@ -27,16 +27,17 @@ public class DatabaseHandler extends Thread {
 
     @Override
     public void run() {
-        
+
         System.out.println("Starting database insertions. From CDR records " + start + " to " + end);
 
         String tablename = PostgreConnector.getTableName();
-        String insert = "INSERT INTO "+tablename+" (called_num, called_tower, recipient_num, recipient_tower, datetime, duration) VALUES(?, ?, ?, ?, ?, ?);";
+        String insert = "INSERT INTO " + tablename + " (called_num, called_tower, recipient_num, recipient_tower, datetime, duration) VALUES(?, ?, ?, ?, ?, ?);";
         PreparedStatement ps = null;
         CDRRecord cdrRecord;
         try {
             ps = PostgreConnector.getConnection().prepareStatement(insert);
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
         }
         for (String item : jsonArray) {
@@ -49,10 +50,11 @@ public class DatabaseHandler extends Thread {
                 ps.setString(5, cdrRecord.getDatetime());
                 ps.setString(6, cdrRecord.getDuration());
                 ps.executeUpdate();
-            }
+            } 
             catch (IOException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) {
                 e.printStackTrace();
             }
         }
