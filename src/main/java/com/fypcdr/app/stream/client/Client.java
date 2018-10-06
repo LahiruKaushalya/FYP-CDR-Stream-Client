@@ -29,6 +29,8 @@ public class Client {
 
     public static void main(String[] args) throws SQLException {
         
+        new Client();
+        
         InputStream input;
         try {
             input = new FileInputStream("conf.properties");
