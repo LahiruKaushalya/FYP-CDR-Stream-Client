@@ -15,19 +15,19 @@ public class StreamHandler {
 
     public StreamHandler() {
         this.system = ActorSystem.create("CDRHttpClient");
-        this.TIME_OUT = Settings.timeout;
+        this.TIME_OUT = Integer.parseInt(Client.getProp().getProperty("timeout")); // 60 Seconds;
     }
 
     public void requestCDRRecords(int noOfRecords) {
 
-        int defaultChunkSize = Settings.chunkSize;
+        int defaultChunkSize = Integer.parseInt(Client.getProp().getProperty("chunkSize")); // 60 Seconds;
 
         if (noOfRecords <= defaultChunkSize) {
             ResponseHandler R1 = new ResponseHandler(system, 0, noOfRecords);
             R1.run();
         } 
         else {
-            int chunkSize = getChunkSize(noOfRecords);
+            int chunkSize = getChunkSize(noOfRecords, defaultChunkSize);
             int start, end;
 
             for (int i = 0; i < noOfRecords; i += chunkSize) {
@@ -49,15 +49,14 @@ public class StreamHandler {
         }
     }
 
-    private int getChunkSize(int noOfRecords) {
+    private int getChunkSize(int noOfRecords, int defaultChunkSize) {
 
         int curChunkSize = noOfRecords;
-
-        if (noOfRecords % Settings.chunkSize == 0) {
-            curChunkSize = Settings.chunkSize;
+        if (noOfRecords % defaultChunkSize == 0) {
+            curChunkSize = defaultChunkSize;
         } 
         else {
-            while (curChunkSize > Settings.chunkSize) {
+            while (curChunkSize > defaultChunkSize) {
                 if (curChunkSize % 2 != 0) {
                     curChunkSize += 1;
                     curChunkSize /= 2;

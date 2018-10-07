@@ -32,7 +32,7 @@ public class ResponseHandler extends Thread {
     public ResponseHandler(ActorSystem system, int start, int end) {
         this.start = start;
         this.end = end;
-        this.TIME_OUT = Settings.timeout; // 60 Seconds
+        this.TIME_OUT = Integer.parseInt(Client.getProp().getProperty("timeout")); // 60 Seconds
         this.system = system;
     }
 
@@ -44,7 +44,9 @@ public class ResponseHandler extends Thread {
         final Materializer materializer = ActorMaterializer.create(system);
         
         final Flow<HttpRequest, HttpResponse, CompletionStage<OutgoingConnection>> connectionFlow =
-            Http.get(system).outgoingConnection(toHost(Settings.ipAddress, Settings.port));
+            Http.get(system).outgoingConnection(toHost(
+                    Client.getProp().getProperty("ipAddress"), 
+                    Integer.parseInt(Client.getProp().getProperty("port"))));
         
         final CompletionStage<HttpResponse> responseFuture
                 = Source.single(HttpRequest.create().withUri(getUri()))
@@ -64,7 +66,7 @@ public class ResponseHandler extends Thread {
                         .utf8String()
                         .replace("[", "")
                         .replace("]", "")
-                        .split(Settings.jsonSeparator);
+                        .split("/");
 
                 System.out.println(body.length + " records recieved.");
 
