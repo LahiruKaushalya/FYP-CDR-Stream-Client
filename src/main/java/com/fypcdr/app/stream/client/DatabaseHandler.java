@@ -15,7 +15,7 @@ public class DatabaseHandler extends Thread {
 
     private final int start;
     private final int end;
-    private String[] jsonArray;
+    private final String[] jsonArray;
     private final ObjectMapper mapper;
 
     public DatabaseHandler(String[] jsonArray, int start, int end) {

@@ -19,12 +19,24 @@ public class StreamHandler {
     }
 
     public void requestCDRRecords(int noOfRecords) {
+        
+        Long startTime = System.currentTimeMillis();
 
         int defaultChunkSize = Integer.parseInt(Client.getProp().getProperty("chunkSize")); // 60 Seconds;
 
         if (noOfRecords <= defaultChunkSize) {
-            ResponseHandler R1 = new ResponseHandler(system, 0, noOfRecords);
-            R1.run();
+            try {
+                ResponseHandler rh = new ResponseHandler(system, 0, noOfRecords);
+                rh.run();
+                rh.join(TIME_OUT);
+            } 
+            catch (Exception ex) {
+                Logger.getLogger(StreamHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       
+            Long endTime = System.currentTimeMillis();
+            System.out.println((endTime - startTime) / 1000.0 + " Seconds taken.");
+            system.terminate();
         } 
         else {
             int chunkSize = getChunkSize(noOfRecords, defaultChunkSize);
@@ -41,10 +53,12 @@ public class StreamHandler {
                     thread.start();
                     thread.join(TIME_OUT);
                 } 
-                catch (InterruptedException ex) {
+                catch (Exception ex) {
                     Logger.getLogger(StreamHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            Long endTime = System.currentTimeMillis();
+            System.out.println((endTime - startTime) / 1000.0 + " Seconds taken.");
             system.terminate();
         }
     }
