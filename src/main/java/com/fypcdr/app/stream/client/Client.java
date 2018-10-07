@@ -19,6 +19,8 @@ public class Client {
     
     private static Properties prop;
 
+    public static void main(String[] args) throws SQLException {
+    
     public static Properties getProp() {
         return prop;
     }
@@ -30,7 +32,6 @@ public class Client {
     public static void main(String[] args) throws SQLException {
         
         new Client();
-        
         InputStream input;
         try {
             input = new FileInputStream("conf.properties");
@@ -44,10 +45,15 @@ public class Client {
         
         String tablename = "cdrtesttable";
         PostgreConnector.createTable(tablename);
-
         StreamHandler streamHandler = new StreamHandler();
         int noOfRecords = Integer.parseInt(args[0]);
+  
+        Long x = System.currentTimeMillis();
+
         streamHandler.requestCDRRecords(noOfRecords);
+
+        Long y = System.currentTimeMillis();
+        System.out.println((y-x)/1000 + " Seconds taken.");
     }
 
 
