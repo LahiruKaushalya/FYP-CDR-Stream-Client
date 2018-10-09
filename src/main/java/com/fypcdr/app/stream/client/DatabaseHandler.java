@@ -36,12 +36,7 @@ public class DatabaseHandler extends Thread {
         CDRRecord cdrRecord;
         try {
             ps = PostgreConnector.getConnection().prepareStatement(insert);
-        } 
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        for (String item : jsonArray) {
-            try {
+            for (String item : jsonArray) {
                 cdrRecord = mapper.readValue(item, CDRRecord.class);
                 ps.setString(1, cdrRecord.getCalled_num());
                 ps.setString(2, cdrRecord.getCalled_tower());
@@ -49,14 +44,14 @@ public class DatabaseHandler extends Thread {
                 ps.setString(4, cdrRecord.getRecipient_tower());
                 ps.setString(5, cdrRecord.getDatetime());
                 ps.setString(6, cdrRecord.getDuration());
-                ps.executeUpdate();
-            } 
-            catch (IOException ex) {
-                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-            catch (SQLException e) {
-                e.printStackTrace();
+                ps.addBatch();
             }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        catch (IOException ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Database insertions finished. From CDR records " + start + " to " + end);
     }
